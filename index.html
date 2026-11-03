@@ -210,6 +210,14 @@
                         </span>
                         <input type="text" id="search-input" onkeydown="if(event.key === 'Enter'){event.preventDefault();}" oninput="filterLogs()" placeholder="日付・カテゴリ・キーワードで絞り込み..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
                     </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="sort-desc-btn" onclick="changeSortOrder('desc')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors bg-red-600 text-white border-red-600 shadow-sm">
+                            新しい順 ↓
+                        </button>
+                        <button type="button" id="sort-asc-btn" onclick="changeSortOrder('asc')" class="px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors border-slate-200 bg-white text-slate-600 hover:text-slate-900">
+                            古い順 ↑
+                        </button>
+                    </div>
                     <div class="text-xs text-slate-500 font-medium shrink-0">
                         該当件数: <span id="log-count" class="font-bold text-slate-900">0</span> 件
                     </div>
@@ -266,9 +274,14 @@
                                 <p class="text-xs text-slate-600">進捗ログの追加および既存ログの削除が可能です。</p>
                             </div>
                         </div>
-                        <button onclick="handleAdminLogout()" class="px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors shadow-sm self-start sm:self-center">
-                            ログアウト
-                        </button>
+                        <div class="flex items-center gap-2 self-start sm:self-center">
+                            <button type="button" onclick="exportLogsJson()" class="px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors shadow-sm">
+                                📥 logs.jsonをエクスポート
+                            </button>
+                            <button onclick="handleAdminLogout()" class="px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors shadow-sm">
+                                ログアウト
+                            </button>
+                        </div>
                     </div>
 
                     <!-- 新規進捗投稿フォーム -->
@@ -288,12 +301,12 @@
                                     <input type="text" id="form-date" placeholder="例: 2026.11.02" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-slate-700 mb-1">カテゴリ</label>
+                                    <label for="form-category" class="block text-xs font-semibold text-slate-700 mb-1">カテゴリ</label>
                                     <select id="form-category" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm bg-white">
+                                        <option value="プロジェクト進捗">プロジェクト進捗</option>
+                                        <option value="業務フロー">業務フロー</option>
                                         <option value="機能追加">機能追加</option>
-                                        <option value="デザイン調整">デザイン調整</option>
-                                        <option value="要件・検討">要件・検討</option>
-                                        <option value="バグ修正">バグ修正</option>
+                                        <option value="デザイン変更">デザイン変更</option>
                                         <option value="その他">その他</option>
                                     </select>
                                 </div>
@@ -339,8 +352,9 @@
    <!-- パスワード判定用のスクリプト（自動記憶機能付き） -->
     <script>
         // ▼▼ ここでパスワードを変更できます ▼▼
-        // 笆ｼ笆ｼ 繝代せ繝ｯ繝ｼ繝芽ｨｭ螳夲ｼ井ｸ闊ｬ逕ｨ縺ｨ邂｡逅・・畑縺ｧ迢ｬ遶具ｼ・笆ｼ笆ｼ
-        const USER_PASSWORD  = "aidx2026";      // 荳闊ｬ髢ｲ隕ｧ逕ｨ繝代せ繝ｯ繝ｼ繝・        const ADMIN_PASSWORD = "admin2026dx";   // 邂｡逅・・ｰら畑繝代せ繝ｯ繝ｼ繝会ｼ磯ｲ謐励Ο繧ｰ縺ｮ霑ｽ蜉繝ｻ蜑企勁逕ｨ・・        // 笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ笆ｲ
+        const USER_PASSWORD  = "aidx2026";       // 一般閲覧用パスワード
+        const ADMIN_PASSWORD = "admin2026dx";    // 管理者用パスワード
+
         // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         // ページを読み込んだとき、すでに認証済み（localStorageに保存されている）かチェックする
@@ -393,15 +407,17 @@
             const tabBtnTimeline = document.getElementById('tab-btn-timeline');
             const tabBtnAdmin = document.getElementById('tab-btn-admin');
 
+            if (!portalContent || !timelineContent || !adminContent) return;
+
             // リセット
             portalContent.classList.add('hidden');
             timelineContent.classList.add('hidden');
             adminContent.classList.add('hidden');
 
             const inactiveClass = "px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900";
-            tabBtnPortal.className = inactiveClass;
-            tabBtnTimeline.className = inactiveClass;
-            tabBtnAdmin.className = inactiveClass + " flex items-center gap-1.5";
+            if (tabBtnPortal) tabBtnPortal.className = inactiveClass;
+            if (tabBtnTimeline) tabBtnTimeline.className = inactiveClass;
+            if (tabBtnAdmin) tabBtnAdmin.className = inactiveClass + " flex items-center gap-1.5";
 
             if (tab === 'portal') {
                 portalContent.classList.remove('hidden');
@@ -482,40 +498,141 @@
             {
                 id: "default-2",
                 date: "2026.10.28",
-                category: "デザイン調整",
+                category: "デザイン変更",
                 content: "ヘッダーのAIアイコンを視認性の高い赤色に変更し、全体レイアウトを最適化しました。"
             }
         ];
 
+        let currentSortOrder = 'desc';
+
+        const LOGS_STORAGE_KEY = 'project_progress_logs';
+
+        function normalizeLogs(logs) {
+            return Array.isArray(logs) ? logs : DEFAULT_LOGS;
+        }
+
+        function saveLogs(logs) {
+            const normalized = normalizeLogs(logs);
+            localStorage.setItem(LOGS_STORAGE_KEY, JSON.stringify(normalized));
+            return normalized;
+        }
+
         function getStoredLogs() {
-            const stored = localStorage.getItem('project_progress_logs');
+            const stored = localStorage.getItem(LOGS_STORAGE_KEY);
             if (!stored) {
-                localStorage.setItem('project_progress_logs', JSON.stringify(DEFAULT_LOGS));
-                return DEFAULT_LOGS;
+                return saveLogs(DEFAULT_LOGS);
             }
             try {
-                return JSON.parse(stored);
+                return normalizeLogs(JSON.parse(stored));
             } catch (e) {
-                return DEFAULT_LOGS;
+                return saveLogs(DEFAULT_LOGS);
             }
         }
 
-        function initProgressLogs() {
-            const logs = getStoredLogs();
+        async function loadLogsFromJson() {
+            const fallbackLogs = getStoredLogs();
+
+            try {
+                const response = await fetch('./logs.json', { cache: 'no-store' });
+                if (!response.ok) {
+                    return fallbackLogs;
+                }
+
+                const remoteLogs = await response.json();
+                if (!Array.isArray(remoteLogs)) {
+                    return fallbackLogs;
+                }
+
+                return saveLogs(remoteLogs);
+            } catch (error) {
+                return fallbackLogs;
+            }
+        }
+
+        async function initProgressLogs() {
+            const logs = await loadLogsFromJson();
             renderPublicLogs(logs);
+            renderAdminLogs();
+        }
+
+        function exportLogsJson() {
+            const logs = getSortedLogs(getStoredLogs());
+            const json = JSON.stringify(logs, null, 2);
+            const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'logs.json';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function normalizeLogDateValue(date) {
+            const raw = String(date || '').trim();
+            if (!raw) return 0;
+
+            const normalized = raw.replace(/年|月/g, '-').replace(/日/g, '').replace(/\./g, '-');
+            const match = normalized.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+            if (match) {
+                const [, year, month, day] = match;
+                const timestamp = Date.parse(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+                if (!Number.isNaN(timestamp)) return timestamp;
+            }
+
+            const fallback = Date.parse(normalized);
+            return Number.isNaN(fallback) ? 0 : fallback;
+        }
+
+        function getSortedLogs(logs) {
+            return [...logs].sort((a, b) => {
+                const dateA = normalizeLogDateValue(a && a.date);
+                const dateB = normalizeLogDateValue(b && b.date);
+
+                if (dateA === dateB) return 0;
+                return currentSortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+            });
+        }
+
+        function updateSortButtons() {
+            const descButton = document.getElementById('sort-desc-btn');
+            const ascButton = document.getElementById('sort-asc-btn');
+
+            if (!descButton || !ascButton) return;
+
+            const activeClass = 'px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors bg-red-600 text-white border-red-600 shadow-sm';
+            const inactiveClass = 'px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors border-slate-200 bg-white text-slate-600 hover:text-slate-900';
+
+            if (currentSortOrder === 'desc') {
+                descButton.className = activeClass;
+                ascButton.className = inactiveClass;
+            } else {
+                descButton.className = inactiveClass;
+                ascButton.className = activeClass;
+            }
+        }
+
+        function changeSortOrder(order) {
+            currentSortOrder = order === 'asc' ? 'asc' : 'desc';
+            updateSortButtons();
+            filterLogs();
         }
 
         // カテゴリごとのバッジスタイル生成
+// カテゴリごとのバッジスタイル生成
         function getCategoryBadge(category) {
             switch(category) {
+                case 'プロジェクト進捗':
+                    return '<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">プロジェクト進捗</span>';
+                case '業務フロー':
+                    return '<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-sky-50 text-sky-700 border border-sky-200">業務フロー</span>';
                 case '機能追加':
                     return '<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-red-50 text-red-600 border border-red-200">機能追加</span>';
-                case 'デザイン調整':
-                    return '<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-700 border border-slate-200">デザイン調整</span>';
-                case '要件・検討':
-                    return '<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-amber-50 text-amber-700 border border-amber-200">要件・検討</span>';
-                case 'バグ修正':
-                    return '<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-rose-50 text-rose-700 border border-rose-200">バグ修正</span>';
+                case 'デザイン変更':
+                    return '<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-purple-50 text-purple-700 border border-purple-200">デザイン変更</span>';
+                case 'その他':
+                    return '<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-700 border border-slate-200">その他</span>';
                 default:
                     return `<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-700 border border-slate-200">${escapeHtml(category)}</span>`;
             }
@@ -606,9 +723,7 @@
                 content: content
             };
 
-            const logs = getStoredLogs();
-            logs.unshift(newLog); // 最新を先頭に追加
-            localStorage.setItem('project_progress_logs', JSON.stringify(logs));
+            const logs = saveLogs([newLog, ...getStoredLogs()]);
 
             // 入力リセット
             document.getElementById('form-content').value = '';
@@ -631,9 +746,9 @@
             if (!confirm('この進捗ログを完全に削除してもよろしいですか？')) return;
             let logs = getStoredLogs();
             logs = logs.filter(log => log.id !== id);
-            localStorage.setItem('project_progress_logs', JSON.stringify(logs));
+            const savedLogs = saveLogs(logs);
 
-            renderPublicLogs(logs);
+            renderPublicLogs(savedLogs);
             renderAdminLogs();
         }
 
@@ -642,20 +757,17 @@
             const searchInput = document.getElementById('search-input');
             const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
             const allLogs = getStoredLogs();
+            const filtered = query
+                ? allLogs.filter(log => {
+                    const matchDate = (log.date || '').toLowerCase().includes(query);
+                    const matchCategory = (log.category || '').toLowerCase().includes(query);
+                    const matchContent = (log.content || '').toLowerCase().includes(query);
+                    return matchDate || matchCategory || matchContent;
+                })
+                : allLogs;
 
-            if (!query) {
-                renderPublicLogs(allLogs);
-                return;
-            }
-
-            const filtered = allLogs.filter(log => {
-                const matchDate = (log.date || '').toLowerCase().includes(query);
-                const matchCategory = (log.category || '').toLowerCase().includes(query);
-                const matchContent = (log.content || '').toLowerCase().includes(query);
-                return matchDate || matchCategory || matchContent;
-            });
-
-            renderPublicLogs(filtered);
+            renderPublicLogs(getSortedLogs(filtered));
+            updateSortButtons();
         }
 
         // XSS防止サニタイズ
@@ -671,4 +783,3 @@
     </script>
 </body>
 </html>
-
