@@ -12,6 +12,34 @@
             font-family: 'Inter', sans-serif;
         }
 
+        .app-tabs-bar {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 0.25rem;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .app-tab-button {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .app-tab-panel:not(.hidden) {
+            animation: app-tab-enter 180ms ease-out;
+        }
+
+        @keyframes app-tab-enter {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* PC画面向け：バリューチェーンの矢印シェイプ */
         @media (min-width: 768px) {
             .arrow-step {
@@ -26,14 +54,13 @@
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
 
     <!-- ========================================== -->
-    <!-- パスワード認証画面（最初はここが表示されます） -->
+    <!-- パスワード認証画面 -->
     <!-- ========================================== -->
     <div id="auth-screen" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-xl border border-slate-100 space-y-6">
             <div class="text-center space-y-2">
                 <div class="flex justify-center items-center space-x-1.5 mb-3">
                     <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-xs">DX</div>
-                    <!-- 鮮やかな赤 (bg-red-600) に変更 -->
                     <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">AI</div>
                 </div>
                 <h2 class="text-xl font-bold text-slate-900">アクセス認証</h2>
@@ -52,148 +79,116 @@
         </div>
     </div>
 
-    
     <!-- ========================================== -->
-    <!-- メインコンテンツ（認証後に表示されます） -->
+    <!-- メインコンテンツ -->
     <!-- ========================================== -->
     <div id="main-content" class="hidden flex-col min-h-screen justify-between">
         <!-- ヘッダー -->
         <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
-            <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="max-w-5xl mx-auto px-6 h-16 flex items-center">
                 <div class="flex items-center space-x-3">
                     <div class="flex items-center space-x-1.5">
                         <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-sm">DX</div>
-                        <!-- 鮮やかな赤 (bg-red-600) に変更 -->
                         <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-sm">AI</div>
                     </div>
                     <span class="font-semibold text-slate-900 tracking-tight ml-1">購入＆支払いフロー AI DX化</span>
                 </div>
-                <!-- ナビゲーションタブ -->
-                <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 space-x-1">
-                    <button id="tab-btn-portal" onclick="switchTab('portal')" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-white bg-indigo-950 shadow-sm">
-                        ポータル
+            </div>
+            <div class="border-t border-slate-100">
+                <nav class="app-tabs-bar max-w-5xl mx-auto px-6 py-2 bg-slate-100 rounded-xl border border-slate-200" role="tablist" aria-label="メインナビゲーション">
+                    <button type="button" id="tab-btn-home" role="tab" aria-selected="true" aria-controls="tab-home-content" onclick="switchTab('home')" class="app-tab-button px-4 py-2 text-xs font-semibold rounded-lg transition-all text-white bg-indigo-950 shadow-sm">
+                        ホーム
                     </button>
-                    <button id="tab-btn-timeline" onclick="switchTab('timeline')" class="px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                    <button type="button" id="tab-btn-timeline" role="tab" aria-selected="false" aria-controls="tab-timeline-content" onclick="switchTab('timeline')" class="app-tab-button px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900">
                         進捗掲示板
                     </button>
-                    <button id="tab-btn-admin" onclick="switchTab('admin')" class="px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <button type="button" id="tab-btn-concept" role="tab" aria-selected="false" aria-controls="tab-concept-content" onclick="switchTab('concept')" class="app-tab-button px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                        全体コンセプト
+                    </button>
+                    <button type="button" id="tab-btn-schedule" role="tab" aria-selected="false" aria-controls="tab-schedule-content" onclick="switchTab('schedule')" class="app-tab-button px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                        スケジュール
+                    </button>
+                    <button type="button" id="tab-btn-finance" role="tab" aria-selected="false" aria-controls="tab-finance-content" onclick="switchTab('finance')" class="app-tab-button px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                        財務経理用
+                    </button>
+                    <button type="button" id="tab-btn-admin" role="tab" aria-selected="false" aria-controls="tab-admin-content" onclick="switchTab('admin')" class="app-tab-button px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900">
                         管理者
                     </button>
-                </div>
+                </nav>
             </div>
         </header>
 
         <!-- メインエリア -->
         <main class="max-w-5xl mx-auto px-6 py-10 flex-grow w-full">
             
-            <!-- ========================================== -->
             <!-- タブ1: ポータル（ホーム）画面 -->
-            <!-- ========================================== -->
-            <div id="tab-portal-content" class="space-y-10">
-            
-            <!-- アクションリンクエリア -->
-            <div class="flex justify-end">
-                <a href="https://drive.worksmobile.com/drive/web/share/folder?resourceKey=QDEwMTAzNzl8MzQ3MjYxMzc4MDI3NjUyMzAyMXxEfDA&resourceLocation=23921" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-indigo-950 hover:bg-indigo-900 transition-colors rounded-xl shadow-sm">
-                    詳細資料・リンクはこちら
-                </a>
-            </div>
+            <div id="tab-home-content" class="app-tab-panel space-y-10" role="tabpanel" aria-labelledby="tab-btn-home">
+                <div class="flex justify-end">
+                    <a href="https://drive.worksmobile.com/drive/web/share/folder?resourceKey=QDEwMTAzNzl8MzQ3MjYxMzc4MDI3NjUyMzAyMXxEfDA&resourceLocation=23921" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-indigo-950 hover:bg-indigo-900 transition-colors rounded-xl shadow-sm">
+                        詳細資料・リンクはこちら
+                    </a>
+                </div>
 
-            <!-- 3つの目的セクション -->
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- 目的 1 -->
-                <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <!-- 新購入＆支払いフロー（案） -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 p-8 shadow-sm space-y-6">
                     <div>
-                        <div class="w-10 h-10 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center font-bold mb-6">01</div>
-                        <h3 class="text-lg font-semibold text-slate-900 mb-3">企業生産性の向上</h3>
-                        <ul class="space-y-2 text-slate-600 text-sm leading-relaxed">
-                            <li>• 購入＆支払い処理の自動化による生産性の向上（目標ROI 121.67%）</li>
-                            <li>• 支払いサイクル短縮化（翌月末払い：取適法）のため省力化体制の実現</li>
+                        <h2 class="text-xl font-bold text-slate-900 mb-2">新購入＆支払いフロー（案）</h2>
+                        <p class="text-slate-600 text-sm">4つのステップで物品を購入。システムを活用し支払いフロー全体を変革し生産性を向上（DX）。<strong class="text-sky-600">※図形をクリックするとそれぞれの詳細ページに移動します。</strong></p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-0 pt-2">
+                        <a href="step1.html" class="bg-sky-400 hover:bg-sky-500 transition-colors text-white font-bold py-5 px-6 text-center shadow-sm flex items-center justify-center min-h-[72px] rounded-lg md:rounded-none arrow-step-first group relative no-underline">
+                            <span>① 購入</span>
+                            <span class="absolute bottom-1 right-2 text-[10px] opacity-80 group-hover:underline">🔍 詳細へ</span>
+                        </a>
+                        <a href="step2.html" class="bg-sky-400 hover:bg-sky-500 transition-colors text-white font-bold py-5 px-6 text-center shadow-sm flex items-center justify-center min-h-[72px] rounded-lg md:rounded-none arrow-step md:-ml-2 z-10 group relative no-underline">
+                            <span>② 納品＆検収</span>
+                            <span class="absolute bottom-1 right-2 text-[10px] opacity-80 group-hover:underline">🔍 詳細へ</span>
+                        </a>
+                        <a href="step3.html" class="bg-sky-400 hover:bg-sky-500 transition-colors text-white font-bold py-5 px-6 text-center shadow-sm flex items-center justify-center min-h-[72px] rounded-lg md:rounded-none arrow-step md:-ml-2 z-20 group relative no-underline">
+                            <span>③ 請求書確認</span>
+                            <span class="absolute bottom-1 right-2 text-[10px] opacity-80 group-hover:underline">🔍 詳細へ</span>
+                        </a>
+                        <a href="step4.html" class="bg-sky-400 hover:bg-sky-500 transition-colors text-white font-bold py-5 px-6 text-center shadow-sm flex items-center justify-center min-h-[72px] rounded-lg md:rounded-none arrow-step md:-ml-2 z-30 group relative no-underline">
+                            <span>④ 支払い申請</span>
+                            <span class="absolute bottom-1 right-2 text-[10px] opacity-80 group-hover:underline">🔍 詳細へ</span>
+                        </a>
+                    </div>
+
+                    <div class="bg-sky-50/70 border border-sky-100 rounded-2xl p-6 text-slate-700 mt-6">
+                        <h3 class="font-semibold text-slate-900 mb-3 text-sm">効率化の特徴</h3>
+                        <ul class="space-y-2 text-sm leading-relaxed">
+                            <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>購入申請から経理への支払い依頼まで Oneシステムで一貫処理</li>
+                            <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>システム申請一覧画面による一括承認処理</li>
+                            <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>書類のペーパーレス化により電子データでそのまま保管（倉庫が不要に）</li>
+                            <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>データ化による案件検索とデータ集計、コスト分析の効率化</li>
+                            <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>店舗と本社、経理など遠隔部門間の購買コミュニケーションの容易化</li>
+                            <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>AI-OCRによる書類の読取と購入申請の作成（AI） など</li>
                         </ul>
                     </div>
-                </div>
+                </section>
 
-                <!-- 目的 2 -->
-                <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <!-- 稟議書決裁フロー（案）セクション -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 p-8 shadow-sm space-y-6">
                     <div>
-                        <div class="w-10 h-10 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center font-bold mb-6">02</div>
-                        <h3 class="text-lg font-semibold text-slate-900 mb-3">法令順守と内部統制強化</h3>
-                        <ul class="space-y-2 text-slate-600 text-sm leading-relaxed">
-                            <li>• 納品日と支払い状況（60日以内：取適法）を全社で一元管理</li>
-                            <li>• 遠隔の店舗での現物と納品書データの突合（内部統制：金商法）</li>
-                            <li>• 発注前にシステム稟議で決裁＆購入申請承認（内部統制：金商法）</li>
+                        <h2 class="text-xl font-bold text-slate-900 mb-2">稟議書決裁フロー（案）</h2>
+                        <ul class="space-y-1.5 text-slate-600 text-sm leading-relaxed">
+                            <li class="flex items-start"><span class="mr-2 text-indigo-950 font-bold">・</span>①稟議表紙と②見積り書で申請して決裁</li>
+                            <li class="flex items-start"><span class="mr-2 text-indigo-950 font-bold">・</span>③付属資料は決裁後に添付して完成する</li>
                         </ul>
                     </div>
-                </div>
 
-                <!-- 目的 3 -->
-                <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center font-bold mb-6">03</div>
-                        <h3 class="text-lg font-semibold text-slate-900 mb-3">組織意思決定速度の向上と未来投資</h3>
-                        <ul class="space-y-2 text-slate-600 text-sm leading-relaxed">
-                            <li>• ペーパーレス化即時回覧とオンライン承認</li>
-                            <li>• データ分析、AIエージェント活用への基盤整備</li>
-                        </ul>
+                    <div class="pt-2">
+                        <a href="ringi.html" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 text-base font-bold text-white bg-indigo-950 hover:bg-indigo-900 transition-colors rounded-xl shadow-sm gap-2">
+                            <span>稟議書決裁フロー図を見る</span>
+                            <span>🔍</span>
+                        </a>
                     </div>
-                </div>
+                </section>
             </div>
 
-            <!-- 新購入＆支払いフロー（バリューチェーン型セクション） -->
-            <section class="bg-white rounded-2xl border border-slate-200/80 p-8 shadow-sm space-y-6">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-900 mb-2">新購入＆支払いフロー（案）</h2>
-                    <p class="text-slate-600 text-sm">4つのステップで物品を購入。システムを活用し支払いフロー全体を変革し生産性を向上（DX）</p>
-                </div>
-
-                <!-- バリューチェーン型 4ステップ矢印 -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-0 pt-2">
-                    <div class="bg-sky-400 text-white font-bold py-5 px-6 text-center shadow-sm flex items-center justify-center min-h-[72px] rounded-lg md:rounded-none arrow-step-first">
-                        ① 購入
-                    </div>
-                    <div class="bg-sky-400 text-white font-bold py-5 px-6 text-center shadow-sm flex items-center justify-center min-h-[72px] rounded-lg md:rounded-none arrow-step md:-ml-2 z-10">
-                        ② 納品＆検収
-                    </div>
-                    <div class="bg-sky-400 text-white font-bold py-5 px-6 text-center shadow-sm flex items-center justify-center min-h-[72px] rounded-lg md:rounded-none arrow-step md:-ml-2 z-20">
-                        ③ 請求書確認
-                    </div>
-                    <div class="bg-sky-400 text-white font-bold py-5 px-6 text-center shadow-sm flex items-center justify-center min-h-[72px] rounded-lg md:rounded-none arrow-step md:-ml-2 z-30">
-                        ④ 支払い申請
-                    </div>
-                </div>
-
-                <!-- 特徴ボックス -->
-                <div class="bg-sky-50/70 border border-sky-100 rounded-2xl p-6 text-slate-700 mt-6">
-                    <h3 class="font-semibold text-slate-900 mb-3 text-sm">効率化の特徴</h3>
-                    <ul class="space-y-2 text-sm leading-relaxed">
-                        <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>購入申請から経理への支払い依頼まで Oneシステムで一貫処理</li>
-                        <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>システム申請一覧画面による一括承認処理</li>
-                        <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>書類のペーパーレス化により電子データでそのまま保管（倉庫が不要に）</li>
-                        <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>データ化による案件検索とデータ集計、コスト分析の効率化</li>
-                        <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>店舗と本社、経理など遠隔部門間の購買コミュニケーションの容易化</li>
-                        <li class="flex items-start"><span class="mr-2 text-sky-600 font-bold">・</span>AI-OCRによる書類の読取と購入申請の作成（AI） など</li>
-                    </ul>
-                </div>
-            </section>
-
-            <!-- スケジュール・進捗セクション -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 p-8 shadow-sm">
-                <h2 class="text-xl font-bold text-slate-900 mb-4">スケジュール・進捗状況</h2>
-                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
-                    <span class="text-sm font-medium text-slate-700">現在のフェーズ：要件定義・検証フェーズ</span>
-                    <span class="text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full">調整中</span>
-                </div>
-            </div>
-
-            </div>
-            <!-- ポータル画面ここまで -->
-
-                       <!-- ========================================== -->
-            <!-- タブ2: 進捗掲示板（一般公開・閲覧専用） -->
-            <!-- ========================================== -->
-            <div id="tab-timeline-content" class="hidden space-y-8">
-                
-                <!-- 掲示板ヘッダー・概要 -->
+            <!-- 進捗掲示板タブ -->
+            <div id="tab-timeline-content" class="app-tab-panel hidden space-y-8" role="tabpanel" aria-labelledby="tab-btn-timeline">
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm">
                     <div class="flex items-center space-x-2.5 mb-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-red-600 inline-block"></span>
@@ -202,7 +197,6 @@
                     <p class="text-slate-600 text-sm">プロジェクトの更新・機能追加・改修履歴を時系列（新着順）で閲覧・検索できます。</p>
                 </div>
 
-                <!-- 検索バー・絞り込みエリア -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div class="relative w-full sm:w-96">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
@@ -223,24 +217,119 @@
                     </div>
                 </div>
 
-                <!-- タイムラインリスト描画エリア（閲覧専用） -->
-                <div id="timeline-list" class="space-y-4">
-                    <!-- JavaScriptで動的生成されます -->
-                </div>
+                <div id="timeline-list" class="space-y-4"></div>
 
-                <!-- 検索一致ゼロのときのメッセージ -->
                 <div id="empty-message" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200/80 p-8 shadow-sm">
                     <p class="text-slate-400 text-sm">該当する進捗ログは見つかりませんでした。</p>
                 </div>
-
             </div>
 
-            <!-- ========================================== -->
-            <!-- タブ3: 管理者（進捗ログ投稿・編集・削除） -->
-            <!-- ========================================== -->
-            <div id="tab-admin-content" class="hidden space-y-8">
-                
-                <!-- 管理者ログインフォーム（未認証時） -->
+            <!-- 全体コンセプトタブ -->
+            <div id="tab-concept-content" class="app-tab-panel hidden space-y-8" role="tabpanel" aria-labelledby="tab-btn-concept">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm">
+                    <h2 class="text-xl font-bold text-slate-900 mb-2">全体コンセプト</h2>
+                    <p class="text-slate-600 text-sm">本プロジェクトにおける3つの主要コンセプトと方向性をご確認いただけます。</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center font-bold mb-6">01</div>
+                            <h3 class="text-lg font-semibold text-slate-900 mb-3">企業生産性の向上</h3>
+                            <ul class="space-y-2 text-slate-600 text-sm leading-relaxed">
+                                <li>• 購入＆支払い処理の自動化による生産性の向上（目標ROI 121.67%）</li>
+                                <li>• 支払いサイクル短縮化（翌月末払い：取適法）のため省力化体制の実現</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center font-bold mb-6">02</div>
+                            <h3 class="text-lg font-semibold text-slate-900 mb-3">法令順守と内部統制強化</h3>
+                            <ul class="space-y-2 text-slate-600 text-sm leading-relaxed">
+                                <li>• 納品日と支払い状況（60日以内：取適法）を全社で一元管理</li>
+                                <li>• 遠隔の店舗での現物と納品書データの突合（内部統制：金商法）</li>
+                                <li>• 発注前にシステム稟議で決裁＆購入申請承認（内部統制：金商法）</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center font-bold mb-6">03</div>
+                            <h3 class="text-lg font-semibold text-slate-900 mb-3">組織意思決定速度の向上と未来投資</h3>
+                            <ul class="space-y-2 text-slate-600 text-sm leading-relaxed">
+                                <li>• ペーパーレス化即時回覧とオンライン承認</li>
+                                <li>• データ分析、AIエージェント活用への基盤整備</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm space-y-4">
+                    <h3 class="text-base font-bold text-slate-900">購入品目カテゴリ・全体フロー図一覧</h3>
+                    <p class="text-slate-600 text-sm">クリックすると詳細な図を確認できます。</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                        <a href="category.html" class="flex items-center justify-center px-5 py-3.5 bg-indigo-950 hover:bg-indigo-900 text-white font-medium text-sm rounded-xl shadow-sm transition-colors text-center no-underline">
+                            購入品目カテゴリ表
+                        </a>
+                        <a href="flow.html" class="flex items-center justify-center px-5 py-3.5 bg-sky-600 hover:bg-sky-700 text-white font-medium text-sm rounded-xl shadow-sm transition-colors text-center no-underline">
+                            購入＆支払い全体フロー図
+                        </a>
+                        <a href="ringi-all.html" class="flex items-center justify-center px-5 py-3.5 bg-slate-800 hover:bg-slate-900 text-white font-medium text-sm rounded-xl shadow-sm transition-colors text-center no-underline">
+                            稟議決裁全体フロー図
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- スケジュールタブ -->
+            <div id="tab-schedule-content" class="app-tab-panel hidden space-y-8" role="tabpanel" aria-labelledby="tab-btn-schedule">
+                <section class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm space-y-5">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-2">スケジュール</h2>
+                        <p class="text-slate-600 text-sm">プロジェクトのスケジュールをご確認ください。<strong>画像をクリックすると拡大表示します。</strong></p>
+                    </div>
+                    <div class="cursor-pointer group relative overflow-hidden rounded-xl border border-slate-200 hover:ring-2 hover:ring-sky-500 transition-all" onclick="openScheduleModal()">
+                        <img src="schedule.png" alt="スケジュール" class="w-full h-auto">
+                        <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="bg-slate-900/80 text-white text-xs px-3.5 py-2 rounded-lg font-medium shadow-md flex items-center gap-1.5">
+                                🔍 クリックして拡大表示
+                            </span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 財務経理向けリンク（更新済み） -->
+            <div id="tab-finance-content" class="app-tab-panel hidden space-y-8" role="tabpanel" aria-labelledby="tab-btn-finance">
+                <section class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm space-y-5">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-2">財務経理用</h2>
+                        <p class="text-slate-600 text-sm">購入・支払いシステムの経理処理に関するデモ画面（Storylane）をご確認いただけます。</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <a href="https://layerx.storylane.io/share/1tig2vqn2kj3" target="_blank" rel="noopener noreferrer" class="block rounded-xl border border-slate-200 p-6 hover:border-indigo-500 hover:shadow-md transition-all group bg-indigo-950 text-white no-underline">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-bold text-base">支払い申請から会計仕訳作成</h3>
+                                <span class="text-xs bg-white/20 px-2.5 py-1 rounded-lg">外部デモ ↗</span>
+                            </div>
+                            <p class="text-xs text-indigo-200 leading-relaxed">支払い申請データから会計仕訳が自動作成される一連のフローを確認します。</p>
+                        </a>
+                        <a href="https://layerx.storylane.io/share/fpkxdclvkogw" target="_blank" rel="noopener noreferrer" class="block rounded-xl border border-slate-200 p-6 hover:border-indigo-500 hover:shadow-md transition-all group bg-slate-900 text-white no-underline">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-bold text-base">承認・経理支払い・マスタメンテ</h3>
+                                <span class="text-xs bg-white/20 px-2.5 py-1 rounded-lg">外部デモ ↗</span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">支払い申請の承認プロセス、経理での支払い処理、マスタメンテナンスの操作を確認します。</p>
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+            <!-- タブ3: 管理者 -->
+            <div id="tab-admin-content" class="app-tab-panel hidden space-y-8" role="tabpanel" aria-labelledby="tab-btn-admin">
                 <div id="admin-login-box" class="bg-white rounded-2xl border border-slate-200/80 p-8 shadow-sm max-w-md mx-auto space-y-6">
                     <div class="text-center space-y-2">
                         <div class="w-10 h-10 bg-slate-900 text-white rounded-xl mx-auto flex items-center justify-center">
@@ -261,9 +350,7 @@
                     </form>
                 </div>
 
-                <!-- 管理者操作パネル（認証成功時のみ表示） -->
                 <div id="admin-panel" class="hidden space-y-8">
-                    <!-- 管理者ヘッダーバー -->
                     <div class="bg-red-50 border border-red-200 rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 bg-red-600 text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-sm">
@@ -284,7 +371,6 @@
                         </div>
                     </div>
 
-                    <!-- 新規進捗投稿フォーム -->
                     <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm space-y-5">
                         <div class="border-b border-slate-100 pb-3">
                             <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
@@ -325,18 +411,14 @@
                         </form>
                     </div>
 
-                    <!-- 登録済みログの管理・削除エリア -->
                     <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                             <h3 class="font-bold text-slate-900 text-base">登録済み進捗ログの管理（削除）</h3>
                             <span class="text-xs text-slate-500">全 <span id="admin-log-count" class="font-bold text-slate-900">0</span> 件</span>
                         </div>
-                        <div id="admin-timeline-list" class="space-y-4">
-                            <!-- 管理者用リスト（削除ボタン付き）が動的生成されます -->
-                        </div>
+                        <div id="admin-timeline-list" class="space-y-4"></div>
                     </div>
                 </div>
-
             </div>
         </main>
 
@@ -348,19 +430,34 @@
         </footer>
     </div>
 
-    <!-- パスワード判定用のスクリプト -->
-   <!-- パスワード判定用のスクリプト（自動記憶機能付き） -->
+    <!-- 拡大モーダル用コンテナ（スケジュール用） -->
+    <div id="schedule-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeScheduleModal()">
+        <div class="relative max-w-[95vw] max-h-[90vh] bg-white rounded-2xl p-4 shadow-2xl flex flex-col" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100 shrink-0">
+                <h3 class="font-bold text-slate-900 text-sm">スケジュール表（拡大表示）</h3>
+                <button type="button" onclick="closeScheduleModal()" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">✕ 閉じる</button>
+            </div>
+            <div class="overflow-auto flex-grow rounded-xl border border-slate-100 max-h-[80vh]">
+                <img src="schedule.png" alt="スケジュール拡大" class="w-auto min-w-[1000px] max-w-none">
+            </div>
+        </div>
+    </div>
+
+    <!-- パスワード判定・制御スクリプト -->
     <script>
-        // ▼▼ ここでパスワードを変更できます ▼▼
         const USER_PASSWORD  = "aidx2026";       // 一般閲覧用パスワード
         const ADMIN_PASSWORD = "admin2026dx";    // 管理者用パスワード
 
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-
-        // ページを読み込んだとき、すでに認証済み（localStorageに保存されている）かチェックする
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('portal_authenticated') === 'true') {
                 unlockPortal();
+                
+                if (window.location.hash) {
+                    const tabName = window.location.hash.substring(1);
+                    if (['home', 'timeline', 'concept', 'schedule', 'finance', 'admin'].includes(tabName)) {
+                        switchTab(tabName);
+                    }
+                }
             }
         });
 
@@ -370,7 +467,6 @@
             const errorMessage = document.getElementById('error-message');
 
             if (inputVal === USER_PASSWORD) {
-                // 認証成功したらブラウザに「認証済み」というフラグを保存する
                 localStorage.setItem('portal_authenticated', 'true');
                 unlockPortal();
             } else {
@@ -379,7 +475,6 @@
             }
         }
 
-        // メイン画面を表示して認証画面を隠す共通関数
         function unlockPortal() {
             const authScreen = document.getElementById('auth-screen');
             const mainContent = document.getElementById('main-content');
@@ -388,51 +483,48 @@
             mainContent.classList.remove('hidden');
             mainContent.classList.add('flex');
 
-            // 掲示板データの初期化と描画
             initProgressLogs();
-
-            // 管理者認証状態の確認
             checkAdminAuthStatus();
         }
 
-        // ==========================================
-        // タブ切り替え機能（ポータル / 進捗掲示板 / 管理者）
-        // ==========================================
         function switchTab(tab) {
-            const portalContent = document.getElementById('tab-portal-content');
-            const timelineContent = document.getElementById('tab-timeline-content');
-            const adminContent = document.getElementById('tab-admin-content');
+            const tabConfig = {
+                home: { button: 'tab-btn-home', panel: 'tab-home-content', activeColor: 'bg-indigo-950' },
+                timeline: { button: 'tab-btn-timeline', panel: 'tab-timeline-content', activeColor: 'bg-red-600' },
+                concept: { button: 'tab-btn-concept', panel: 'tab-concept-content', activeColor: 'bg-amber-600' },
+                schedule: { button: 'tab-btn-schedule', panel: 'tab-schedule-content', activeColor: 'bg-sky-600' },
+                finance: { button: 'tab-btn-finance', panel: 'tab-finance-content', activeColor: 'bg-emerald-700' },
+                admin: { button: 'tab-btn-admin', panel: 'tab-admin-content', activeColor: 'bg-slate-900' }
+            };
+            const selectedTab = tabConfig[tab];
+            if (!selectedTab) return;
 
-            const tabBtnPortal = document.getElementById('tab-btn-portal');
-            const tabBtnTimeline = document.getElementById('tab-btn-timeline');
-            const tabBtnAdmin = document.getElementById('tab-btn-admin');
+            const inactiveClass = 'app-tab-button px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900';
+            const activeClass = 'app-tab-button px-4 py-2 text-xs font-semibold rounded-lg transition-all text-white shadow-sm';
 
-            if (!portalContent || !timelineContent || !adminContent) return;
+            Object.values(tabConfig).forEach(({ button, panel }) => {
+                const tabButton = document.getElementById(button);
+                const tabPanel = document.getElementById(panel);
+                if (tabButton) {
+                    tabButton.className = inactiveClass;
+                    tabButton.setAttribute('aria-selected', 'false');
+                }
+                if (tabPanel) tabPanel.classList.add('hidden');
+            });
 
-            // リセット
-            portalContent.classList.add('hidden');
-            timelineContent.classList.add('hidden');
-            adminContent.classList.add('hidden');
+            const selectedButton = document.getElementById(selectedTab.button);
+            const selectedPanel = document.getElementById(selectedTab.panel);
+            if (selectedButton) {
+                selectedButton.className = `${activeClass} ${selectedTab.activeColor}`;
+                selectedButton.setAttribute('aria-selected', 'true');
+            }
+            if (selectedPanel) selectedPanel.classList.remove('hidden');
 
-            const inactiveClass = "px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-600 hover:text-slate-900";
-            if (tabBtnPortal) tabBtnPortal.className = inactiveClass;
-            if (tabBtnTimeline) tabBtnTimeline.className = inactiveClass;
-            if (tabBtnAdmin) tabBtnAdmin.className = inactiveClass + " flex items-center gap-1.5";
-
-            if (tab === 'portal') {
-                portalContent.classList.remove('hidden');
-                tabBtnPortal.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-white bg-indigo-950 shadow-sm";
-            } else if (tab === 'timeline') {
-                timelineContent.classList.remove('hidden');
-                tabBtnTimeline.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-white bg-red-600 shadow-sm";
+            if (tab === 'timeline') {
                 filterLogs();
             } else if (tab === 'admin') {
-                adminContent.classList.remove('hidden');
-                tabBtnAdmin.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-white bg-slate-900 shadow-sm flex items-center gap-1.5";
-                
                 checkAdminAuthStatus();
 
-                // 今日の日付を自動セット
                 const today = new Date();
                 const yyyy = today.getFullYear();
                 const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -445,7 +537,24 @@
         }
 
         // ==========================================
-        // 管理者認証機能（権限管理）
+        // モーダル制御機能（スケジュール拡大表示）
+        // ==========================================
+        function openScheduleModal() {
+            document.getElementById('schedule-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeScheduleModal() {
+            document.getElementById('schedule-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeScheduleModal();
+        });
+
+        // ==========================================
+        // 管理者認証機能
         // ==========================================
         function checkAdminAuthStatus() {
             const isAdmin = localStorage.getItem('portal_admin_authenticated') === 'true';
@@ -486,7 +595,7 @@
         }
 
         // ==========================================
-        // 進捗ログ管理（localStorage & 動的描画）
+        // 進捗ログ管理
         // ==========================================
         const DEFAULT_LOGS = [
             {
@@ -504,7 +613,6 @@
         ];
 
         let currentSortOrder = 'desc';
-
         const LOGS_STORAGE_KEY = 'project_progress_logs';
 
         function normalizeLogs(logs) {
@@ -531,18 +639,11 @@
 
         async function loadLogsFromJson() {
             const fallbackLogs = getStoredLogs();
-
             try {
                 const response = await fetch('./logs.json', { cache: 'no-store' });
-                if (!response.ok) {
-                    return fallbackLogs;
-                }
-
+                if (!response.ok) return fallbackLogs;
                 const remoteLogs = await response.json();
-                if (!Array.isArray(remoteLogs)) {
-                    return fallbackLogs;
-                }
-
+                if (!Array.isArray(remoteLogs)) return fallbackLogs;
                 return saveLogs(remoteLogs);
             } catch (error) {
                 return fallbackLogs;
@@ -572,7 +673,6 @@
         function normalizeLogDateValue(date) {
             const raw = String(date || '').trim();
             if (!raw) return 0;
-
             const normalized = raw.replace(/年|月/g, '-').replace(/日/g, '').replace(/\./g, '-');
             const match = normalized.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
             if (match) {
@@ -580,7 +680,6 @@
                 const timestamp = Date.parse(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
                 if (!Number.isNaN(timestamp)) return timestamp;
             }
-
             const fallback = Date.parse(normalized);
             return Number.isNaN(fallback) ? 0 : fallback;
         }
@@ -589,7 +688,6 @@
             return [...logs].sort((a, b) => {
                 const dateA = normalizeLogDateValue(a && a.date);
                 const dateB = normalizeLogDateValue(b && b.date);
-
                 if (dateA === dateB) return 0;
                 return currentSortOrder === 'asc' ? dateA - dateB : dateB - dateA;
             });
@@ -598,9 +696,7 @@
         function updateSortButtons() {
             const descButton = document.getElementById('sort-desc-btn');
             const ascButton = document.getElementById('sort-asc-btn');
-
             if (!descButton || !ascButton) return;
-
             const activeClass = 'px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors bg-red-600 text-white border-red-600 shadow-sm';
             const inactiveClass = 'px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors border-slate-200 bg-white text-slate-600 hover:text-slate-900';
 
@@ -619,8 +715,6 @@
             filterLogs();
         }
 
-        // カテゴリごとのバッジスタイル生成
-// カテゴリごとのバッジスタイル生成
         function getCategoryBadge(category) {
             switch(category) {
                 case 'プロジェクト進捗':
@@ -638,14 +732,12 @@
             }
         }
 
-        // 1. 一般ユーザー向け閲覧専用リストの描画（削除ボタン・編集UIなし）
         function renderPublicLogs(logs) {
             const timelineList = document.getElementById('timeline-list');
             const emptyMessage = document.getElementById('empty-message');
             const logCount = document.getElementById('log-count');
 
             if (!timelineList) return;
-
             logCount.textContent = logs.length;
 
             if (logs.length === 0) {
@@ -668,7 +760,6 @@
             `).join('');
         }
 
-        // 2. 管理者向け管理リストの描画（削除ボタン付き）
         function renderAdminLogs() {
             const adminList = document.getElementById('admin-timeline-list');
             const adminCount = document.getElementById('admin-log-count');
@@ -700,11 +791,8 @@
             `).join('');
         }
 
-        // 新規進捗ログの追加（管理者専用）
         function addProgressLog(event) {
             event.preventDefault();
-            
-            // セキュリティチェック：管理者未ログイン時は追加拒否
             if (localStorage.getItem('portal_admin_authenticated') !== 'true') {
                 alert('進捗を追加するには管理者ログインが必要です。');
                 return;
@@ -724,20 +812,13 @@
             };
 
             const logs = saveLogs([newLog, ...getStoredLogs()]);
-
-            // 入力リセット
             document.getElementById('form-content').value = '';
-
-            // 各種ビュー更新
             renderPublicLogs(logs);
             renderAdminLogs();
-
             alert('進捗ログを追加しました。');
         }
 
-        // ログ削除（管理者専用）
         function deleteLog(id) {
-            // セキュリティチェック：管理者未ログイン時は削除拒否
             if (localStorage.getItem('portal_admin_authenticated') !== 'true') {
                 alert('進捗を削除するには管理者ログインが必要です。');
                 return;
@@ -747,12 +828,10 @@
             let logs = getStoredLogs();
             logs = logs.filter(log => log.id !== id);
             const savedLogs = saveLogs(logs);
-
             renderPublicLogs(savedLogs);
             renderAdminLogs();
         }
 
-        // リアルタイム検索・絞り込み（一般ユーザー用）
         function filterLogs() {
             const searchInput = document.getElementById('search-input');
             const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
@@ -770,7 +849,6 @@
             updateSortButtons();
         }
 
-        // XSS防止サニタイズ
         function escapeHtml(str) {
             if (!str) return '';
             return String(str)
