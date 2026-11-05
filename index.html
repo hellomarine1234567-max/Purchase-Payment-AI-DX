@@ -85,7 +85,7 @@
     <div id="main-content" class="hidden flex-col min-h-screen justify-between">
         <!-- ヘッダー -->
         <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
-            <div class="max-w-5xl mx-auto px-6 h-16 flex items-center">
+            <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="flex items-center space-x-1.5">
                         <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-sm">DX</div>
@@ -93,6 +93,10 @@
                     </div>
                     <span class="font-semibold text-slate-900 tracking-tight ml-1">購入＆支払いフロー AI DX化</span>
                 </div>
+                <!-- タイトル行の右端に移動配置 -->
+                <a href="https://drive.worksmobile.com/drive/web/share/folder?resourceKey=QDEwMTAzNzl8MzQ3MjYxMzc4MDI3NjUyMzAyMXxEfDA&resourceLocation=23921" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white bg-indigo-950 hover:bg-indigo-900 transition-colors rounded-xl shadow-sm">
+                    詳細資料・リンクはこちら ↗
+                </a>
             </div>
             <div class="border-t border-slate-100">
                 <nav class="app-tabs-bar max-w-5xl mx-auto px-6 py-2 bg-slate-100 rounded-xl border border-slate-200" role="tablist" aria-label="メインナビゲーション">
@@ -123,12 +127,6 @@
             
             <!-- タブ1: ポータル（ホーム）画面 -->
             <div id="tab-home-content" class="app-tab-panel space-y-10" role="tabpanel" aria-labelledby="tab-btn-home">
-                <div class="flex justify-end">
-                    <a href="https://drive.worksmobile.com/drive/web/share/folder?resourceKey=QDEwMTAzNzl8MzQ3MjYxMzc4MDI3NjUyMzAyMXxEfDA&resourceLocation=23921" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-indigo-950 hover:bg-indigo-900 transition-colors rounded-xl shadow-sm">
-                        詳細資料・リンクはこちら
-                    </a>
-                </div>
-
                 <!-- 新購入＆支払いフロー（案） -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 p-8 shadow-sm space-y-6">
                     <div>
@@ -268,7 +266,7 @@
                 </div>
 
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-slate-900">購入品目カテゴリ・全体フロー図一覧</h3>
+                    <h3 class="text-base font-bold text-slate-900">関連資料・フロー図一覧</h3>
                     <p class="text-slate-600 text-sm">クリックすると詳細な図を確認できます。</p>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                         <a href="category.html" class="flex items-center justify-center px-5 py-3.5 bg-indigo-950 hover:bg-indigo-900 text-white font-medium text-sm rounded-xl shadow-sm transition-colors text-center no-underline">
@@ -302,7 +300,7 @@
                 </section>
             </div>
 
-            <!-- 財務経理向けリンク（更新済み） -->
+            <!-- 財務経理向けリンク -->
             <div id="tab-finance-content" class="app-tab-panel hidden space-y-8" role="tabpanel" aria-labelledby="tab-btn-finance">
                 <section class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm space-y-5">
                     <div>

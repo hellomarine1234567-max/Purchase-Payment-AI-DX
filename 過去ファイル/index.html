@@ -267,9 +267,8 @@
                     </div>
                 </div>
 
-                <!-- ご要望の3つのボタン（新規追加） -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-slate-900">関連資料・フロー図一覧</h3>
+                    <h3 class="text-base font-bold text-slate-900">購入品目カテゴリ・全体フロー図一覧</h3>
                     <p class="text-slate-600 text-sm">クリックすると詳細な図を確認できます。</p>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                         <a href="category.html" class="flex items-center justify-center px-5 py-3.5 bg-indigo-950 hover:bg-indigo-900 text-white font-medium text-sm rounded-xl shadow-sm transition-colors text-center no-underline">
@@ -303,22 +302,28 @@
                 </section>
             </div>
 
-            <!-- 財務経理向けリンク -->
+            <!-- 財務経理向けリンク（更新済み） -->
             <div id="tab-finance-content" class="app-tab-panel hidden space-y-8" role="tabpanel" aria-labelledby="tab-btn-finance">
                 <section class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm space-y-5">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900 mb-2">財務経理用</h2>
-                        <p class="text-slate-600 text-sm">購入・支払いフローに関連する資料や情報へのリンクです。</p>
+                        <p class="text-slate-600 text-sm">購入・支払いシステムの経理処理に関するデモ画面（Storylane）をご確認いただけます。</p>
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
-                        <a href="https://drive.worksmobile.com/drive/web/share/folder?resourceKey=QDEwMTAzNzl8MzQ3MjYxMzc4MDI3NjUyMzAyMXxEfDA&resourceLocation=23921" target="_blank" rel="noopener noreferrer" class="block rounded-xl border border-slate-200 p-5 hover:border-indigo-300 hover:shadow-sm transition-all">
-                            <h3 class="font-semibold text-slate-900 mb-2">詳細資料・関連リンク</h3>
-                            <p class="text-sm text-slate-600">共有フォルダー内のプロジェクト資料を開きます。</p>
+                        <a href="https://layerx.storylane.io/share/1tig2vqn2kj3" target="_blank" rel="noopener noreferrer" class="block rounded-xl border border-slate-200 p-6 hover:border-indigo-500 hover:shadow-md transition-all group bg-indigo-950 text-white no-underline">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-bold text-base">支払い申請から会計仕訳作成</h3>
+                                <span class="text-xs bg-white/20 px-2.5 py-1 rounded-lg">外部デモ ↗</span>
+                            </div>
+                            <p class="text-xs text-indigo-200 leading-relaxed">支払い申請データから会計仕訳が自動作成される一連のフローを確認します。</p>
                         </a>
-                        <button type="button" onclick="switchTab('timeline')" class="text-left rounded-xl border border-slate-200 p-5 hover:border-red-300 hover:shadow-sm transition-all">
-                            <h3 class="font-semibold text-slate-900 mb-2">進捗掲示板</h3>
-                            <p class="text-sm text-slate-600">プロジェクトの更新・改修履歴を確認します。</p>
-                        </button>
+                        <a href="https://layerx.storylane.io/share/fpkxdclvkogw" target="_blank" rel="noopener noreferrer" class="block rounded-xl border border-slate-200 p-6 hover:border-indigo-500 hover:shadow-md transition-all group bg-slate-900 text-white no-underline">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-bold text-base">承認・経理支払い・マスタメンテ</h3>
+                                <span class="text-xs bg-white/20 px-2.5 py-1 rounded-lg">外部デモ ↗</span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">支払い申請の承認プロセス、経理での支払い処理、マスタメンテナンスの操作を確認します。</p>
+                        </a>
                     </div>
                 </section>
             </div>
@@ -447,7 +452,6 @@
             if (localStorage.getItem('portal_authenticated') === 'true') {
                 unlockPortal();
                 
-                // URLのハッシュ（#concept など）がある場合に該当タブを開く
                 if (window.location.hash) {
                     const tabName = window.location.hash.substring(1);
                     if (['home', 'timeline', 'concept', 'schedule', 'finance', 'admin'].includes(tabName)) {
@@ -456,7 +460,6 @@
                 }
             }
         });
-
 
         function checkPassword(event) {
             event.preventDefault();
